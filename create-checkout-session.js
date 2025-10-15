@@ -34,8 +34,8 @@ export default async function handler(req, res) {
       mode: "payment",
       payment_method_types: ["card"],
       line_items,
-      success_url: success_url || "https://your-site.com/success.html?session_id={CHECKOUT_SESSION_ID}",
-      cancel_url: cancel_url || "https://your-site.com/cart.html"
+      success_url: success_url || "https://squarebidness.com/success/?session_id={CHECKOUT_SESSION_ID}",
+      cancel_url: cancel_url || "https://squarebidness.com/cart/"
     });
 
     return res.status(200).json({ id: session.id, url: session.url });
