@@ -1,11 +1,17 @@
-// /api/create-checkout-session.js
-export const config = { runtime: "nodejs" }; // ✅ not "nodejs18.x"
+// sb-checkout-server/api/create-checkout-session.js
+export const config = { runtime: "nodejs" };
 import Stripe from "stripe";
-
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY, { apiVersion: "2023-10-16" });
-const SITE_URL = process.env.SITE_URL || "https://www.squarebidness.com";
+
+const ORIGIN = "https://www.squarebidness.com"; // your site
 
 export default async function handler(req, res) {
+  // CORS
+  res.setHeader("Access-Control-Allow-Origin", ORIGIN);
+  res.setHeader("Access-Control-Allow-Methods", "POST, OPTIONS");
+  res.setHeader("Access-Control-Allow-Headers", "Content-Type");
+  if (req.method === "OPTIONS") return res.status(200).end();
+
   if (req.method !== "POST") {
     res.setHeader("Allow", "POST");
     return res.status(405).json({ error: "Method Not Allowed" });
@@ -29,6 +35,7 @@ export default async function handler(req, res) {
       quantity: Math.max(1, Math.floor(Number(i?.qty || 1)))
     }));
 
+    const SITE_URL = process.env.SITE_URL || "https://www.squarebidness.com";
     const session = await stripe.checkout.sessions.create({
       mode: "payment",
       payment_method_types: ["card"],
